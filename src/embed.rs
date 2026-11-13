@@ -3,10 +3,10 @@ use axum::http::{header, StatusCode, Uri};
 use axum::response::{IntoResponse, Response};
 use rust_embed::RustEmbed;
 
-/// 前端 pnpm build 产物（dist/output/public）同步到此目录，release 编译进单二进制。
+/// 前端 pnpm build 产物 frontend/dist 直接编译进单二进制（编译 Rust 前须先构建前端）。
 /// 未开启 debug-embed 特性时，debug 构建直接从磁盘读取，改前端无需重编译 Rust。
 #[derive(RustEmbed)]
-#[folder = "web/"]
+#[folder = "frontend/dist/"]
 pub struct Assets;
 
 const NO_CACHE: &[&str] = &["index.html", "sw.js", "swx.js", "manifest.webmanifest"];

@@ -1,21 +1,25 @@
-.PHONY: sync-web build release run check clean
+.PHONY: all frontend check build release run clean
 
-# 从 ../newsnow-web 重新构建前端并同步到 web/（随后需重新 release 才会嵌入二进制）
-sync-web:
-	bash scripts/sync-web.sh
+# 一键：构建前端 (frontend/dist) -> 编译 Rust 单二进制（rust-embed 直接嵌入 frontend/dist）
+all: release
 
-check:
+# 构建前端源码，产物在 frontend/dist
+frontend:
+	cd frontend && pnpm install && pnpm exec vite build
+
+check: frontend
 	cargo check
 
-build:
+build: frontend
 	cargo build
 
-release:
+release: frontend
 	cargo build --release
 
-run:
+run: frontend
 	RUST_LOG=newsnow_server=info cargo run
 
 clean:
 	cargo clean
+	rm -rf frontend/dist
 	rm -f data/cache.db data/cache.db-shm data/cache.db-wal
