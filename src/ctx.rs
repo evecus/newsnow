@@ -11,6 +11,8 @@ pub const UA: &str = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.
 #[derive(Clone)]
 pub struct Ctx {
     pub http: Client,
+    /// ProductHunt API token（命令行 -token），为空则回退 RSS
+    pub ph_token: std::sync::Arc<str>,
 }
 
 fn apply_headers(mut rb: RequestBuilder, headers: &[(&str, &str)]) -> RequestBuilder {
@@ -23,7 +25,7 @@ fn apply_headers(mut rb: RequestBuilder, headers: &[(&str, &str)]) -> RequestBui
 }
 
 impl Ctx {
-    pub fn new() -> Self {
+    pub fn new(ph_token: String) -> Self {
         let mut default = HeaderMap::new();
         default.insert(reqwest::header::USER_AGENT, HeaderValue::from_static(UA));
         default.insert(
@@ -37,7 +39,7 @@ impl Ctx {
             .redirect(reqwest::redirect::Policy::limited(5))
             .build()
             .expect("failed to build http client");
-        Self { http }
+        Self { http, ph_token: ph_token.into() }
     }
 
     /// 每次重试都重新构造请求，避免 RequestBuilder 无法 Clone 的问题。

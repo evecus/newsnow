@@ -103,7 +103,7 @@ pub async fn freebuf(ctx: Ctx, _now: i64) -> Result<Vec<NewsItem>> {
 const PH_FEED: &str = "https://www.producthunt.com/feed";
 
 pub async fn producthunt(ctx: Ctx, _now: i64) -> Result<Vec<NewsItem>> {
-    let token = std::env::var("PRODUCTHUNT_API_TOKEN").unwrap_or_default();
+    let token = ctx.ph_token.to_string();
     if token.is_empty() {
         return simple_rss(&ctx, PH_FEED).await;
     }

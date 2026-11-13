@@ -19,10 +19,11 @@ pub struct Cache {
 }
 
 impl Cache {
-    pub fn open(path: &str, enabled: bool) -> Result<Self> {
-        if !enabled {
+    /// path 为 None 时不启用缓存。
+    pub fn open(path: Option<&str>) -> Result<Self> {
+        let Some(path) = path else {
             return Ok(Self { inner: None });
-        }
+        };
         if let Some(parent) = std::path::Path::new(path).parent() {
             std::fs::create_dir_all(parent)?;
         }
